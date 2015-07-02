@@ -7,9 +7,26 @@
 
 ## example usage
 
+To resize based on width:
+
 ```php
 <?php
 require_once('vendor/autoload.php');
 $tp = new teklife\Tinypng('YOUR_API_KEY');
 $tp->shrink('ignore/helicopter-original.png', 'ignore/helicopter-new.png', 150);
 ```
+To resize based on height:
+
+```php
+<?php
+require_once('vendor/autoload.php');
+$tp = new teklife\Tinypng('YOUR_API_KEY');
+$tp->shrink('ignore/helicopter-original.png', 'ignore/helicopter-new.png', '', 150);
+```
+> Images are resized by using the aspect ratio of the original image. Either the width or the height can be provided.
+
+# todo
+
+* finish fopenShrink method for people who do not have curl
+* write tests - not sure how to do this yet, without publishing my API key
+* add to packagist when done - if that is okay with TinyPNG :]
