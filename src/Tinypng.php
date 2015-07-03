@@ -47,7 +47,7 @@ class Tinypng {
         curl_setopt_array($request, array(
             CURLOPT_URL            => $this->host,
             CURLOPT_USERPWD        => 'api:' . $this->apikey,
-            CURLOPT_POSTFIELDS     => self::returnInput(),
+            CURLOPT_POSTFIELDS     => file_get_contents($this->input),
             CURLOPT_BINARYTRANSFER => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => true,
@@ -106,7 +106,7 @@ class Tinypng {
                             'Content-type: ' . $mimeType,
                             'Authorization: Basic ' . self::apiAuth()
                         ),
-                        'content' => self::returnInput()
+                        'content' => file_get_contents($this->input)
                 ),
                 'ssl' => array(
                     'cafile'      => self::caBundle(),
@@ -184,10 +184,5 @@ class Tinypng {
     private static function apiAuth()
     {
         return base64_encode('api:' . $this->apikey);
-    }
-
-    private static function returnInput()
-    {
-        return file_get_contents($this->input);
     }
 }
