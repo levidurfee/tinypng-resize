@@ -38,59 +38,6 @@ class Tinypng {
         return true;
     }
 
-    protected function fopenShrink()
-    {
-        $mimeType = image_type_to_mime_type(exif_imagetype($this->input));
-
-        # setup array for my options
-        $options = array(
-                'http' => array(
-                        'method' => 'POST',
-                        'header' => array(
-                            'Content-type: ' . $mimeType,
-                            'Authorization: Basic ' . self::apiAuth()
-                        ),
-                        'content' => self::returnInput()
-                ),
-                'ssl' => array(
-                    'cafile'      => self::caBundle(),
-                    'verify_peer' => true
-                )
-        );
-
-        $this->makeJson();
-
-        $resizeOption = array(
-                'http' => array(
-                        'method' => 'POST',
-                        'header' => array(
-                            'Content-type: application/json',
-                            'Authorization: Basic ' . self::apiAuth()
-                        ),
-                        'content' => $this->jsonRequest
-                ),
-                'ssl' => array(
-                    'cafile'      => self::caBundle(),
-                    'verify_peer' => true
-                )
-        );
-
-        $result = fopen($this->host, 'r', false, stream_context_create($options));
-
-        if($result) {
-            foreach($http_response_header as $header) {
-                if (strtolower(substr($header, 0, 10)) === "location: ") {
-                    $resizeUrl = substr($header, 10);
-                }
-            }
-        } else {
-            #echo 'error';
-        }
-
-        $image = file_get_contents($resizeUrl, false, stream_context_create($resizeOption));
-        file_put_contents($this->output, $image);
-    }
-
     protected function curlShrink()
     {
         # initialize curl
@@ -145,6 +92,59 @@ class Tinypng {
             print(curl_error($request));
             #throw new \Exception('Error compressing the file');
         }
+    }
+
+    protected function fopenShrink()
+    {
+        $mimeType = image_type_to_mime_type(exif_imagetype($this->input));
+
+        # setup array for my options
+        $options = array(
+                'http' => array(
+                        'method' => 'POST',
+                        'header' => array(
+                            'Content-type: ' . $mimeType,
+                            'Authorization: Basic ' . self::apiAuth()
+                        ),
+                        'content' => self::returnInput()
+                ),
+                'ssl' => array(
+                    'cafile'      => self::caBundle(),
+                    'verify_peer' => true
+                )
+        );
+
+        $this->makeJson();
+
+        $resizeOption = array(
+                'http' => array(
+                        'method' => 'POST',
+                        'header' => array(
+                            'Content-type: application/json',
+                            'Authorization: Basic ' . self::apiAuth()
+                        ),
+                        'content' => $this->jsonRequest
+                ),
+                'ssl' => array(
+                    'cafile'      => self::caBundle(),
+                    'verify_peer' => true
+                )
+        );
+
+        $result = fopen($this->host, 'r', false, stream_context_create($options));
+
+        if($result) {
+            foreach($http_response_header as $header) {
+                if (strtolower(substr($header, 0, 10)) === "location: ") {
+                    $resizeUrl = substr($header, 10);
+                }
+            }
+        } else {
+            #echo 'error';
+        }
+
+        $image = file_get_contents($resizeUrl, false, stream_context_create($resizeOption));
+        file_put_contents($this->output, $image);
     }
 
     protected function makeJson()
