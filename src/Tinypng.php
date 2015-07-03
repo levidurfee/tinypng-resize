@@ -1,10 +1,10 @@
 <?php namespace teklife;
 
-const VERSION = '0.5.0';
+const VERSION = '0.6.0';
 
 /**
  * @author Levi <levi.durfee@gmail.com>
- * @version 0.5.0
+ * @version 0.6.0
  */
 class Tinypng {
 
@@ -58,6 +58,16 @@ class Tinypng {
 
         # get the response
         $response = curl_exec($request);
+
+        $status = curl_getinfo($request, CURLINFO_HTTP_CODE);
+        $headerSize = curl_getinfo($request, CURLINFO_HEADER_SIZE);
+        $headers = self::parseHeaders(substr($response, 0, $headerSize));
+        $body = substr($response, $headerSize);
+        if($status == 401) {
+            $bodyDecoded = json_decode($body);
+            throw new \Exception($bodyDecoded->message);
+            return false;
+        }
 
         # check the response
         if (curl_getinfo($request, CURLINFO_HTTP_CODE) === 201) {
@@ -149,6 +159,10 @@ class Tinypng {
 
     protected function makeJson()
     {
+        if(!(is_int($this->width)) OR (!is_int($this->height))) {
+            throw new \Exception('Width or height must be set and be an int');
+            return false;
+        }
         if($this->fit) {
             list($width, $height) = getimagesize($this->input);
             if($width > $height) {
@@ -163,8 +177,6 @@ class Tinypng {
                 $jsonArray = array('resize' => array('width' => $this->width));
             } elseif(is_int($this->height)) {
                 $jsonArray = array('resize' => array('height' => $this->height));
-            } else {
-                throw new \Exception('Width or height must be set and be an int');
             }
             $this->jsonRequest = json_encode($jsonArray, true);
             return true;
@@ -184,5 +196,19 @@ class Tinypng {
     private static function apiAuth()
     {
         return base64_encode('api:' . $this->apikey);
+    }
+
+    protected static function parseHeaders($headers) {
+        if (!is_array($headers)) {
+            $headers = explode("\r\n", $headers);
+        }
+        $res = array();
+        foreach ($headers as $header) {
+            $split = explode(":", $header, 2);
+            if (count($split) === 2) {
+                $res[strtolower($split[0])] = trim($split[1]);
+            }
+        }
+        return $res;
     }
 }

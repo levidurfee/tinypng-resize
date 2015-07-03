@@ -16,10 +16,11 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         if(file_exists(dirname(__DIR__) . DS . 'config.php')) {
-            require_once(dirname(__DIR__) . DS . 'config.php');
+            require(dirname(__DIR__) . DS . 'config.php');
         } else {
             $apikey = getenv('TP_API_KEY');
         }
+        #echo "API KEY" . $apikey;
         $this->tinypng = new Tinypng($apikey);
     }
 
@@ -36,5 +37,39 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
         $result = $this->tinypng->shrink('ignore/helicopter-original.png',
             'ignore/helicopter-new.png', 150, 150, true);
         $this->assertTrue($result);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Credentials are invalid
+     */
+    public function testInvalidCredentials()
+    {
+        $tp = new Tinypng('invalidcredentials');
+        $result = $tp->shrink('ignore/helicopter-original.png',
+            'ignore/helicopter-new.png', 150, 150, true);
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Width or height must be set and be an int
+     */
+    public function testInvalidWidth()
+    {
+        $result = $this->tinypng->shrink('ignore/helicopter-original.png',
+            'ignore/helicopter-new.png', '', 150, true);
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Width or height must be set and be an int
+     */
+    public function testInvalidHeight()
+    {
+        $result = $this->tinypng->shrink('ignore/helicopter-original.png',
+            'ignore/helicopter-new.png', 150, '', true);
+        $this->assertFalse($result);
     }
 }
