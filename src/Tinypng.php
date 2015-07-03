@@ -2,7 +2,7 @@
 
 /**
  * @author Levi <levi.durfee@gmail.com>
- * @version 0.2.0
+ * @version 0.3.0
  */
 class Tinypng {
 
@@ -12,6 +12,7 @@ class Tinypng {
     protected $output;
     protected $width;
     protected $height;
+    protected $fit;
     protected $jsonRequest;
 
     public function __construct($apikey)
@@ -19,12 +20,13 @@ class Tinypng {
         $this->apikey = $apikey;
     }
 
-    public function shrink($input, $output, $width = '', $height = '')
+    public function shrink($input, $output, $width = '', $height = '', $fit = false)
     {
         $this->input  = $input;
         $this->output = $output;
         $this->width  = $width;
         $this->height = $height;
+        $this->fit    = $fit;
 
         if(function_exists('curl_version')) {
             $this->curlShrink();
@@ -143,13 +145,25 @@ class Tinypng {
 
     protected function makeJson()
     {
-        if(is_int($this->width)) {
-            $jsonArray = array('resize' => array('width' => $this->width));
-        } elseif(is_int($this->height)) {
-            $jsonArray = array('resize' => array('height' => $this->height));
+        if($this->fit) {
+            list($width, $height) = getimagesize($this->input);
+            if($width > $height) {
+                $jsonArray = array('resize' => array('width' => $this->width));
+            } else {
+                $jsonArray = array('resize' => array('height' => $this->height));
+            }
+            $this->jsonRequest = json_encode($jsonArray, true);
+            return true;
         } else {
-            #throw new \Exception('Width or height must be set and be an int');
+            if(is_int($this->width)) {
+                $jsonArray = array('resize' => array('width' => $this->width));
+            } elseif(is_int($this->height)) {
+                $jsonArray = array('resize' => array('height' => $this->height));
+            } else {
+                throw new \Exception('Width or height must be set and be an int');
+            }
+            $this->jsonRequest = json_encode($jsonArray, true);
+            return true;
         }
-        $this->jsonRequest = json_encode($jsonArray, true);
     }
 }

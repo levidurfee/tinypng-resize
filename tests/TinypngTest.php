@@ -34,7 +34,7 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
     public function testShrinkSuccess()
     {
         $result = $this->tinypng->shrink('ignore/helicopter-original.png',
-            'ignore/helicopter-new.png', 150);
+            'ignore/helicopter-new.png', 150, 150, true);
         $this->assertTrue($result);
     }
 }

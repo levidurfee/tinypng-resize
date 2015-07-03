@@ -1,7 +1,7 @@
 {
     "name": "teklife/tinypng-resize",
     "description": "Image compression and resizing.",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "require": {
         "php": ">=5.3.0"
     },
