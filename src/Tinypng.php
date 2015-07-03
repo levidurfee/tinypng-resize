@@ -48,7 +48,7 @@ class Tinypng {
                         'method' => 'POST',
                         'header' => array(
                             'Content-type: ' . $mimeType,
-                            'Authorization: Basic ' . base64_encode('api:' . $this->apikey)
+                            'Authorization: Basic ' . self::apiAuth()
                         ),
                         'content' => file_get_contents($this->input)
                 ),
@@ -65,7 +65,7 @@ class Tinypng {
                         'method' => 'POST',
                         'header' => array(
                             'Content-type: application/json',
-                            'Authorization: Basic ' . base64_encode('api:' . $this->apikey)
+                            'Authorization: Basic ' . self::apiAuth()
                         ),
                         'content' => $this->jsonRequest
                 ),
@@ -179,5 +179,10 @@ class Tinypng {
     private static function userAgent()
     {
         return 'levidurfee/tinypng/' . VERSION . ' PHP/' . PHP_VERSION;
+    }
+
+    private static function apiAuth()
+    {
+        return base64_encode('api:' . $this->apikey);
     }
 }
