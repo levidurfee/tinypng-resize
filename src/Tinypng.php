@@ -6,7 +6,7 @@
  */
 class Tinypng {
 
-    protected $host = "https://api.tinypng.com/shrink";
+    protected $host = 'https://api.tinypng.com/shrink';
     protected $apikey;
     protected $input;
     protected $output;
@@ -47,7 +47,7 @@ class Tinypng {
                         'content' => file_get_contents($this->input)
                 ),
                 'ssl' => array(
-                    'cafile'      => dirname(__DIR__) . DIRECTORY_SEPARATOR . "cacert.pem",
+                    'cafile'      => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem',
                     'verify_peer' => true
                 )
         );
@@ -64,7 +64,7 @@ class Tinypng {
                         'content' => $this->jsonRequest
                 ),
                 'ssl' => array(
-                    'cafile'      => dirname(__DIR__) . DIRECTORY_SEPARATOR . "cacert.pem",
+                    'cafile'      => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem',
                     'verify_peer' => true
                 )
         );
@@ -73,12 +73,12 @@ class Tinypng {
 
         if($result) {
             foreach($http_response_header as $header) {
-                if (strtolower(substr($header, 0, 10)) === "location: ") {
+                if (strtolower(substr($header, 0, 10)) === 'location: ') {
                     $resizeUrl = substr($header, 10);
                 }
             }
         } else {
-            #echo "error";
+            #echo 'error';
         }
 
         $image = file_get_contents($resizeUrl, false, stream_context_create($resizeOption));
@@ -108,7 +108,7 @@ class Tinypng {
         # check the response
         if (curl_getinfo($request, CURLINFO_HTTP_CODE) === 201) {
             $headers = substr($response, 0, curl_getinfo($request, CURLINFO_HEADER_SIZE));
-            foreach (explode("\r\n", $headers) as $header) {
+            foreach (explode('\r\n', $headers) as $header) {
                 if (strtolower(substr($header, 0, 10)) === 'location: ') {
                     $this->makeJson();
                     $request = curl_init();
