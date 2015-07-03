@@ -1,7 +1,7 @@
 # tinypng-resize
 
 [![Build Status](https://travis-ci.org/levidurfee/tinypng-resize.svg?branch=master)](https://travis-ci.org/levidurfee/tinypng-resize)
-[![build v0.1.0](https://img.shields.io/badge/build-0.1.0-orange.svg)]()
+[![build v0.2.0](https://img.shields.io/badge/build-0.2.0-orange.svg)]()
 
 > A service by [tinypng](https://tinypng.com).
 
@@ -27,6 +27,6 @@ $tp->shrink('ignore/helicopter-original.png', 'ignore/helicopter-new.png', '', 1
 
 # todo
 
-* finish fopenShrink method for people who do not have curl
-* write tests - not sure how to do this yet, without publishing my API key
-* add to packagist when done - if that is okay with TinyPNG :]
+- [x] finish fopenShrink method for people who do not have curl
+- [ ] write tests - not sure how to do this yet, without publishing my API key
+- [ ] add to packagist when done - if that is okay with TinyPNG :]
