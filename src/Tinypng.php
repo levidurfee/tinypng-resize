@@ -2,7 +2,7 @@
 
 /**
  * @author Levi <levi.durfee@gmail.com>
- * @version 0.1.0
+ * @version 0.2.0
  */
 class Tinypng {
 
@@ -17,7 +17,6 @@ class Tinypng {
     public function __construct($apikey)
     {
         $this->apikey = $apikey;
-        #echo function_exists('curl_version');
     }
 
     public function shrink($input, $output, $width = '', $height = '')
@@ -26,7 +25,7 @@ class Tinypng {
         $this->output = $output;
         $this->width  = $width;
         $this->height = $height;
-        if(function_exists('curl_version')) {
+        if(!function_exists('curl_version')) {
             $this->curlShrink();
         } else {
             $this->fopenShrink();
@@ -35,7 +34,55 @@ class Tinypng {
 
     protected function fopenShrink()
     {
+        $mimeType = image_type_to_mime_type(exif_imagetype($this->input));
 
+        # setup array for my options
+        $options = array(
+                'http' => array(
+                        'method' => 'POST',
+                        'header' => array(
+                            'Content-type: ' . $mimeType,
+                            'Authorization: Basic ' . base64_encode('api:' . $this->apikey)
+                        ),
+                        'content' => file_get_contents($this->input)
+                ),
+                'ssl' => array(
+                    'cafile'      => dirname(__DIR__) . DIRECTORY_SEPARATOR . "cacert.pem",
+                    'verify_peer' => true
+                )
+        );
+
+        $this->makeJson();
+
+        $resizeOption = array(
+                'http' => array(
+                        'method' => 'POST',
+                        'header' => array(
+                            'Content-type: application/json',
+                            'Authorization: Basic ' . base64_encode('api:' . $this->apikey)
+                        ),
+                        'content' => $this->jsonRequest
+                ),
+                'ssl' => array(
+                    'cafile'      => dirname(__DIR__) . DIRECTORY_SEPARATOR . "cacert.pem",
+                    'verify_peer' => true
+                )
+        );
+
+        $result = fopen($this->host, 'r', false, stream_context_create($options));
+
+        if($result) {
+            foreach($http_response_header as $header) {
+                if (strtolower(substr($header, 0, 10)) === "location: ") {
+                    $resizeUrl = substr($header, 10);
+                }
+            }
+        } else {
+            #echo "error";
+        }
+
+        $image = file_get_contents($resizeUrl, false, stream_context_create($resizeOption));
+        file_put_contents($this->output, $image);
     }
 
     protected function curlShrink()
@@ -51,7 +98,7 @@ class Tinypng {
             CURLOPT_BINARYTRANSFER => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => true,
-            CURLOPT_CAINFO         => dirname(__DIR__) . DIRECTORY_SEPARATOR . "cacert.pem",
+            CURLOPT_CAINFO         => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem',
             CURLOPT_SSL_VERIFYPEER => true
         ));
 
@@ -60,10 +107,9 @@ class Tinypng {
 
         # check the response
         if (curl_getinfo($request, CURLINFO_HTTP_CODE) === 201) {
-            /* Compression was successful, retrieve output from Location header. */
             $headers = substr($response, 0, curl_getinfo($request, CURLINFO_HEADER_SIZE));
             foreach (explode("\r\n", $headers) as $header) {
-                if (strtolower(substr($header, 0, 10)) === "location: ") {
+                if (strtolower(substr($header, 0, 10)) === 'location: ') {
                     $this->makeJson();
                     $request = curl_init();
                     curl_setopt_array($request, array(
@@ -76,7 +122,7 @@ class Tinypng {
                             'Content-Type: application/json',
                             'Content-Length: ' . strlen($this->jsonRequest)
                         ),
-                        CURLOPT_CAINFO         => dirname(__DIR__) . DIRECTORY_SEPARATOR . "cacert.pem",
+                        CURLOPT_CAINFO         => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem',
                         CURLOPT_SSL_VERIFYPEER => true
                     ));
                     if(file_put_contents($this->output, curl_exec($request))) {
