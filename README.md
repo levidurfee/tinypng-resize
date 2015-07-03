@@ -42,3 +42,5 @@ $tp->shrink('ignore/helicopter-original.png', 'ignore/helicopter-new.png', 150, 
 - [ ] write more tests
 - [x] get tests working on travis-ci tests
 - [ ] add to packagist when done - if that is okay with TinyPNG :]
+
+Using [RequestBin](http://requestb.in/) for testing.
