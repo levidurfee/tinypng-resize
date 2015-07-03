@@ -30,6 +30,7 @@ class Tinypng {
         } else {
             $this->fopenShrink();
         }
+        return true;
     }
 
     protected function fopenShrink()
