@@ -1,8 +1,10 @@
 <?php namespace teklife;
 
+const VERSION = '0.5.0';
+
 /**
  * @author Levi <levi.durfee@gmail.com>
- * @version 0.3.0
+ * @version 0.5.0
  */
 class Tinypng {
 
@@ -103,7 +105,8 @@ class Tinypng {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => true,
             CURLOPT_CAINFO         => self::caBundle(),
-            CURLOPT_SSL_VERIFYPEER => true
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_USERAGENT      => self::userAgent()
         ));
 
         # get the response
@@ -127,7 +130,8 @@ class Tinypng {
                             'Content-Length: ' . strlen($this->jsonRequest)
                         ),
                         CURLOPT_CAINFO         => self::caBundle(),
-                        CURLOPT_SSL_VERIFYPEER => true
+                        CURLOPT_SSL_VERIFYPEER => true,
+                        CURLOPT_USERAGENT      => self::userAgent()
                     ));
 
                     if(file_put_contents($this->output, curl_exec($request))) {
@@ -170,5 +174,10 @@ class Tinypng {
     private static function caBundle()
     {
         return dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem';
+    }
+
+    private static function userAgent()
+    {
+        return 'levidurfee/tinypng/' . VERSION . ' PHP/' . PHP_VERSION;
     }
 }

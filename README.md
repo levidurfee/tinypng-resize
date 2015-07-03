@@ -1,7 +1,7 @@
 # tinypng-resize
 
 [![Build Status](https://travis-ci.org/levidurfee/tinypng-resize.svg?branch=master)](https://travis-ci.org/levidurfee/tinypng-resize)
-[![build v0.3.0](https://img.shields.io/badge/build-0.3.0-orange.svg)]()
+[![build v0.5.0](https://img.shields.io/badge/build-0.5.0-orange.svg)]()
 
 > A service by [tinypng](https://tinypng.com).
 
