@@ -15,6 +15,7 @@ class Tinypng {
     protected $width;
     protected $height;
     protected $fit;
+    protected $resizeUrl;
     protected $jsonRequest;
 
     public function __construct($apikey)
@@ -22,18 +23,30 @@ class Tinypng {
         $this->apikey = $apikey;
     }
 
-    public function shrink($input, $output, $width = '', $height = '', $fit = false)
+    public function shrink($input, $output)
     {
         $this->input  = $input;
         $this->output = $output;
-        $this->width  = $width;
-        $this->height = $height;
-        $this->fit    = $fit;
 
         if(function_exists('curl_version')) {
             $this->curlShrink();
         } else {
             $this->fopenShrink();
+        }
+        return $this;
+    }
+
+    public function resize($width = '', $height = '', $fit = false)
+    {
+
+        $this->width  = $width;
+        $this->height = $height;
+        $this->fit    = $fit;
+
+        if(function_exists('curl_version')) {
+            $this->curlResize();
+        } else {
+            $this->fopenResize();
         }
         return true;
     }
@@ -74,18 +87,11 @@ class Tinypng {
             $headers = substr($response, 0, curl_getinfo($request, CURLINFO_HEADER_SIZE));
             foreach (explode("\r\n", $headers) as $header) {
                 if (strtolower(substr($header, 0, 10)) === "location: ") {
-                    $this->makeJson();
+                    $this->resizeUrl = substr($header, 10);
                     $request = curl_init();
                     curl_setopt_array($request, array(
-                        CURLOPT_URL            => substr($header, 10),
-                        CURLOPT_USERPWD        => 'api:' . $this->apikey,
+                        CURLOPT_URL => substr($header, 10),
                         CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_POSTFIELDS     => $this->jsonRequest,
-                        CURLOPT_HEADER         => false,
-                        CURLOPT_HTTPHEADER     => array(
-                            'Content-Type: application/json',
-                            'Content-Length: ' . strlen($this->jsonRequest)
-                        ),
                         CURLOPT_CAINFO         => self::caBundle(),
                         CURLOPT_SSL_VERIFYPEER => true,
                         CURLOPT_USERAGENT      => self::userAgent()
@@ -101,6 +107,32 @@ class Tinypng {
         } else {
             print(curl_error($request));
             #throw new \Exception('Error compressing the file');
+        }
+    }
+
+    protected function curlResize()
+    {
+        $this->makeJson();
+        $request = curl_init();
+        curl_setopt_array($request, array(
+            CURLOPT_URL            => $this->resizeUrl,
+            CURLOPT_USERPWD        => 'api:' . $this->apikey,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POSTFIELDS     => $this->jsonRequest,
+            CURLOPT_HEADER         => false,
+            CURLOPT_HTTPHEADER     => array(
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($this->jsonRequest)
+            ),
+            CURLOPT_CAINFO         => self::caBundle(),
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_USERAGENT      => self::userAgent()
+        ));
+
+        if(file_put_contents($this->output, curl_exec($request))) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -124,6 +156,22 @@ class Tinypng {
                 )
         );
 
+        $result = fopen($this->host, 'r', false, stream_context_create($options));
+
+        if($result) {
+            foreach($http_response_header as $header) {
+                if (strtolower(substr($header, 0, 10)) === "location: ") {
+                    $this->resizeUrl = substr($header, 10);
+                    file_put_contents($this->output, fopen(substr($header, 10), "rb", false));
+                }
+            }
+        } else {
+            #echo 'error';
+        }
+    }
+
+    protected function fopenResize()
+    {
         $this->makeJson();
 
         $resizeOption = array(
@@ -141,20 +189,10 @@ class Tinypng {
                 )
         );
 
-        $result = fopen($this->host, 'r', false, stream_context_create($options));
-
-        if($result) {
-            foreach($http_response_header as $header) {
-                if (strtolower(substr($header, 0, 10)) === "location: ") {
-                    $resizeUrl = substr($header, 10);
-                }
-            }
-        } else {
-            #echo 'error';
-        }
-
-        $image = file_get_contents($resizeUrl, false, stream_context_create($resizeOption));
+        $image = file_get_contents($this->resizeUrl, false, stream_context_create($resizeOption));
         file_put_contents($this->output, $image);
+
+        return true;
     }
 
     protected function makeJson()
@@ -193,7 +231,7 @@ class Tinypng {
         return 'levidurfee/tinypng/' . VERSION . ' PHP/' . PHP_VERSION;
     }
 
-    private static function apiAuth()
+    protected function apiAuth()
     {
         return base64_encode('api:' . $this->apikey);
     }
