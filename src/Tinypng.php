@@ -25,7 +25,7 @@ class Tinypng {
         $this->output = $output;
         $this->width  = $width;
         $this->height = $height;
-        if(!function_exists('curl_version')) {
+        if(function_exists('curl_version')) {
             $this->curlShrink();
         } else {
             $this->fopenShrink();
