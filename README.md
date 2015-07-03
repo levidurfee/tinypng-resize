@@ -1,6 +1,6 @@
 # tinypng-resize
 
-**This repo will be changing over the next couple of days. If you start using it now, be careful when upgrading to 1.0.0. The code will have changed**
+**This repo will be changing over the next couple of days. If you start using it now, be careful when upgrading to 1.0.0. The code will have changed.**
 
 [![Build Status](https://travis-ci.org/levidurfee/tinypng-resize.svg?branch=master)](https://travis-ci.org/levidurfee/tinypng-resize)
 [![build v0.6.0](https://img.shields.io/badge/build-0.6.0-orange.svg)]()
