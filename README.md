@@ -28,5 +28,6 @@ $tp->shrink('ignore/helicopter-original.png', 'ignore/helicopter-new.png', '', 1
 # todo
 
 - [x] finish fopenShrink method for people who do not have curl
-- [ ] write tests - not sure how to do this yet, without publishing my API key
+- [ ] write more tests
+- [x] get tests working on travis-ci tests
 - [ ] add to packagist when done - if that is okay with TinyPNG :]
