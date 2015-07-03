@@ -2,6 +2,9 @@
 define("DS", DIRECTORY_SEPARATOR);
 if(file_exists(dirname(__DIR__) . DS . 'config.php')) {
     require_once(dirname(__DIR__) . DS . 'config.php');
+    $apikey = TP_API_KEY;
+} else {
+    $apikey = $_ENV['TP_API_KEY'];
 }
 require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'autoload.php');
 class TinypngTests extends \PHPUnit_Framework_TestCase
@@ -16,7 +19,7 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->tinypng = new Tinypng(TP_API_KEY);
+        $this->tinypng = new Tinypng($apikey);
     }
 
     /**
