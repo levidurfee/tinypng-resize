@@ -51,7 +51,7 @@ class Tinypng {
                         'content' => file_get_contents($this->input)
                 ),
                 'ssl' => array(
-                    'cafile'      => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem',
+                    'cafile'      => self::caBundle(),
                     'verify_peer' => true
                 )
         );
@@ -68,7 +68,7 @@ class Tinypng {
                         'content' => $this->jsonRequest
                 ),
                 'ssl' => array(
-                    'cafile'      => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem',
+                    'cafile'      => self::caBundle(),
                     'verify_peer' => true
                 )
         );
@@ -102,7 +102,7 @@ class Tinypng {
             CURLOPT_BINARYTRANSFER => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => true,
-            CURLOPT_CAINFO         => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem',
+            CURLOPT_CAINFO         => self::caBundle(),
             CURLOPT_SSL_VERIFYPEER => true
         ));
 
@@ -126,7 +126,7 @@ class Tinypng {
                             'Content-Type: application/json',
                             'Content-Length: ' . strlen($this->jsonRequest)
                         ),
-                        CURLOPT_CAINFO         => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem',
+                        CURLOPT_CAINFO         => self::caBundle(),
                         CURLOPT_SSL_VERIFYPEER => true
                     ));
 
@@ -165,5 +165,10 @@ class Tinypng {
             $this->jsonRequest = json_encode($jsonArray, true);
             return true;
         }
+    }
+
+    private static function caBundle()
+    {
+        return dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem';
     }
 }
