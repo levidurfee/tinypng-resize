@@ -25,6 +25,7 @@ class Tinypng {
         $this->output = $output;
         $this->width  = $width;
         $this->height = $height;
+
         if(function_exists('curl_version')) {
             $this->curlShrink();
         } else {
@@ -74,7 +75,7 @@ class Tinypng {
 
         if($result) {
             foreach($http_response_header as $header) {
-                if (strtolower(substr($header, 0, 10)) === 'location: ') {
+                if (strtolower(substr($header, 0, 10)) === "location: ") {
                     $resizeUrl = substr($header, 10);
                 }
             }
@@ -109,8 +110,8 @@ class Tinypng {
         # check the response
         if (curl_getinfo($request, CURLINFO_HTTP_CODE) === 201) {
             $headers = substr($response, 0, curl_getinfo($request, CURLINFO_HEADER_SIZE));
-            foreach (explode('\r\n', $headers) as $header) {
-                if (strtolower(substr($header, 0, 10)) === 'location: ') {
+            foreach (explode("\r\n", $headers) as $header) {
+                if (strtolower(substr($header, 0, 10)) === "location: ") {
                     $this->makeJson();
                     $request = curl_init();
                     curl_setopt_array($request, array(
@@ -126,6 +127,7 @@ class Tinypng {
                         CURLOPT_CAINFO         => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem',
                         CURLOPT_SSL_VERIFYPEER => true
                     ));
+
                     if(file_put_contents($this->output, curl_exec($request))) {
                         return true;
                     } else {
@@ -146,7 +148,7 @@ class Tinypng {
         } elseif(is_int($this->height)) {
             $jsonArray = array('resize' => array('height' => $this->height));
         } else {
-            throw new \Exception('Width or height must be set and be an int');
+            #throw new \Exception('Width or height must be set and be an int');
         }
         $this->jsonRequest = json_encode($jsonArray, true);
     }
