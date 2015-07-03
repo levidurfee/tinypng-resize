@@ -35,7 +35,7 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
     public function testShrinkSuccess()
     {
         $result = $this->tinypng->shrink('ignore/helicopter-original.png',
-            'ignore/helicopter-new.png', 150, 150, true);
+            'ignore/helicopter-new.png')->resize(150, 150, true);
         $this->assertTrue($result);
     }
 
@@ -47,7 +47,7 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
     {
         $tp = new Tinypng('invalidcredentials');
         $result = $tp->shrink('ignore/helicopter-original.png',
-            'ignore/helicopter-new.png', 150, 150, true);
+            'ignore/helicopter-new.png')->resize(150, 150, true);
         $this->assertFalse($result);
     }
 
@@ -58,7 +58,7 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
     public function testInvalidWidth()
     {
         $result = $this->tinypng->shrink('ignore/helicopter-original.png',
-            'ignore/helicopter-new.png', '', 150, true);
+            'ignore/helicopter-new.png')->resize('', 150, true);
         $this->assertFalse($result);
     }
 
@@ -69,7 +69,7 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
     public function testInvalidHeight()
     {
         $result = $this->tinypng->shrink('ignore/helicopter-original.png',
-            'ignore/helicopter-new.png', 150, '', true);
+            'ignore/helicopter-new.png')->resize(150, '', true);
         $this->assertFalse($result);
     }
 }
