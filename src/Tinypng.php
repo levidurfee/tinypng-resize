@@ -204,7 +204,7 @@ class Tinypng {
     protected function makeJson()
     {
         if(!(is_int($this->width)) OR (!is_int($this->height))) {
-            throw new \Exception('Width or height must be set and be an int');
+            throw new \InvalidArgumentException('Width or height must be set and be an int');
             return false;
         }
         if($this->fit) {

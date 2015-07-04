@@ -34,42 +34,50 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
 
     public function testShrinkSuccess()
     {
-        $result = $this->tinypng->shrink('ignore/helicopter-original.png',
+        try {
+            $result = $this->tinypng->shrink('ignore/helicopter-original.png',
             'ignore/helicopter-new.png')->resize(150, 150, true);
-        $this->assertTrue($result);
+            $this->assertTrue($result);
+        } catch(\Exception $e) {
+            $this->assertEquals('Your monthly limit has been exceeded', $e->getMessage());
+        }
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Credentials are invalid
-     */
     public function testInvalidCredentials()
     {
-        $tp = new Tinypng('invalidcredentials');
-        $result = $tp->shrink('ignore/helicopter-original.png',
-            'ignore/helicopter-new.png')->resize(150, 150, true);
-        $this->assertFalse($result);
+        try {
+            $tp = new Tinypng('invalidcredentials');
+            $result = $tp->shrink('ignore/helicopter-original.png',
+                'ignore/helicopter-new.png')->resize(150, 150, true);
+            $this->assertFalse($result);
+        } catch(\Exception $e) {
+            $this->assertEquals('Credentials are invalid', $e->getMessage());
+        }
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Width or height must be set and be an int
-     */
     public function testInvalidWidth()
     {
-        $result = $this->tinypng->shrink('ignore/helicopter-original.png',
-            'ignore/helicopter-new.png')->resize('', 150, true);
-        $this->assertFalse($result);
+        try {
+            $result = $this->tinypng->shrink('ignore/helicopter-original.png',
+                'ignore/helicopter-new.png')->resize('', 150, true);
+            $this->assertFalse($result);
+        } catch(\InvalidArgumentException $e) {
+            $this->assertEquals('Width or height must be set and be an int', $e->getMessage());
+        } catch(\Exception $e) {
+            $this->assertEquals('Your monthly limit has been exceeded', $e->getMessage());
+        }
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Width or height must be set and be an int
-     */
     public function testInvalidHeight()
     {
-        $result = $this->tinypng->shrink('ignore/helicopter-original.png',
-            'ignore/helicopter-new.png')->resize(150, '', true);
-        $this->assertFalse($result);
+        try {
+            $result = $this->tinypng->shrink('ignore/helicopter-original.png',
+                'ignore/helicopter-new.png')->resize(150, '', true);
+            $this->assertFalse($result);
+        } catch(\InvalidArgumentException $e) {
+            $this->assertEquals('Width or height must be set and be an int', $e->getMessage());
+        } catch(\Exception $e) {
+            $this->assertEquals('Your monthly limit has been exceeded', $e->getMessage());
+        }
     }
 }
