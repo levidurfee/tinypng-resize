@@ -1,10 +1,10 @@
 <?php namespace teklife;
 
-const VERSION = '0.7.0';
+const VERSION = '0.8.0';
 
 /**
  * @author Levi <levi.durfee@gmail.com>
- * @version 0.7.0
+ * @version 0.8.0
  */
 class Tinypng {
 
@@ -76,11 +76,8 @@ class Tinypng {
         $headerSize = curl_getinfo($request, CURLINFO_HEADER_SIZE);
         $headers = self::parseHeaders(substr($response, 0, $headerSize));
         $body = substr($response, $headerSize);
-        if($status == 401) {
-            $bodyDecoded = json_decode($body);
-            throw new \Exception($bodyDecoded->message);
-            return false;
-        }
+
+        $this->handleStatus($status, $body);
 
         # check the response
         if (curl_getinfo($request, CURLINFO_HTTP_CODE) === 201) {
@@ -129,7 +126,16 @@ class Tinypng {
             CURLOPT_USERAGENT      => self::userAgent()
         ));
 
-        if(file_put_contents($this->output, curl_exec($request))) {
+        $response = curl_exec($request);
+
+        $status = curl_getinfo($request, CURLINFO_HTTP_CODE);
+        $headerSize = curl_getinfo($request, CURLINFO_HEADER_SIZE);
+        $headers = self::parseHeaders(substr($response, 0, $headerSize));
+        $body = substr($response, $headerSize);
+
+        $this->handleStatus($status, $body);
+
+        if(file_put_contents($this->output, $response)) {
             return true;
         } else {
             return false;
@@ -248,5 +254,15 @@ class Tinypng {
             }
         }
         return $res;
+    }
+
+    protected function handleStatus($status, $body)
+    {
+        $errors = array(401, 429);
+        if(in_array($status, $errors)) {
+            $bodyDecoded = json_decode($body);
+            throw new \Exception($bodyDecoded->message);
+            return false;
+        }
     }
 }
