@@ -1,10 +1,24 @@
 {
     "name": "teklife/tinypng-resize",
     "description": "Image compression and resizing.",
+    "keywords": [
+            "tinypng",
+            "compression",
+            "resize",
+            "image"
+    ],
     "version": "0.8.0",
     "license": "MIT",
+    "authors": [{
+        "name": "Levi Durfee",
+        "email": "levi.durfee@gmail.com"
+    }],
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
     },
     "autoload": {
         "psr-4": {
