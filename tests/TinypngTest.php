@@ -20,7 +20,6 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
         } else {
             $apikey = getenv('TP_API_KEY');
         }
-        #echo "API KEY" . $apikey;
         $this->tinypng = new Tinypng($apikey);
     }
 
@@ -32,6 +31,9 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
         $this->tinypng = null;
     }
 
+    /**
+     * Test successfully shrink / compressing an image
+     */
     public function testShrinkSuccess()
     {
         try {
@@ -43,6 +45,9 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * Test invalid api key
+     */
     public function testInvalidCredentials()
     {
         try {
@@ -55,6 +60,9 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * Test passing an invalid width
+     */
     public function testInvalidWidth()
     {
         try {
@@ -68,6 +76,9 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * Test passing an invalid height
+     */
     public function testInvalidHeight()
     {
         try {
