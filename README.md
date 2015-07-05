@@ -15,12 +15,12 @@
 
 ## installation
 
-Add `"teklife/tinypng-resize" : "0.8.0"` to your `composer.json`. It might look something like this:
+Add `"teklife/tinypng-resize" : "0.8.*"` to your `composer.json`. It might look something like this:
 
 ```json
 {
   "require": {
-    "teklife/tinypng-resize" : "0.8.0"
+    "teklife/tinypng-resize" : "0.8.*"
   }
 }
 ```
