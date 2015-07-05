@@ -23,11 +23,19 @@ class Tinypng {
         $this->apikey = $apikey;
     }
 
+    /**
+     * Input filename image, and output filename
+     * @param $input
+     * @param $output
+     * @return $this
+     */
     public function shrink($input, $output)
     {
+        # Set these so they can be used throughout the class
         $this->input  = $input;
         $this->output = $output;
 
+        # Check and see if curl is installed - if it isn't, use fopen
         if(function_exists('curl_version')) {
             $this->curlShrink();
         } else {
@@ -36,13 +44,21 @@ class Tinypng {
         return $this;
     }
 
+    /**
+     * Resize the image, fit will keep it within the dimensions you set
+     * @param string $width
+     * @param string $height
+     * @param bool|false $fit
+     * @return bool
+     */
     public function resize($width = '', $height = '', $fit = false)
     {
-
+        # Set these so they can be used throughout the class
         $this->width  = $width;
         $this->height = $height;
         $this->fit    = $fit;
 
+        # Check and see if curl is installed - if it isn't, use fopen
         if(function_exists('curl_version')) {
             $this->curlResize();
         } else {
@@ -51,6 +67,11 @@ class Tinypng {
         return true;
     }
 
+    /**
+     * use curl to shrink / compress the image
+     * @return bool
+     * @throws \Exception
+     */
     protected function curlShrink()
     {
         # initialize curl
@@ -107,6 +128,11 @@ class Tinypng {
         }
     }
 
+    /**
+     * Use curl to resize the image
+     * @return bool
+     * @throws \Exception
+     */
     protected function curlResize()
     {
         $this->makeJson();
@@ -142,6 +168,9 @@ class Tinypng {
         }
     }
 
+    /**
+     * Use fopen to shrink / compress the image
+     */
     protected function fopenShrink()
     {
         $mimeType = image_type_to_mime_type(exif_imagetype($this->input));
@@ -176,6 +205,10 @@ class Tinypng {
         }
     }
 
+    /**
+     * Use fopen to resize the image
+     * @return bool
+     */
     protected function fopenResize()
     {
         $this->makeJson();
@@ -201,6 +234,10 @@ class Tinypng {
         return true;
     }
 
+    /**
+     * Create the json resize request
+     * @return bool
+     */
     protected function makeJson()
     {
         if(!(is_int($this->width)) OR (!is_int($this->height))) {
@@ -227,21 +264,38 @@ class Tinypng {
         }
     }
 
+    /**
+     * Return the cabundle
+     * @return string
+     */
     private static function caBundle()
     {
         return dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cacert.pem';
     }
 
+    /**
+     * Send a 'user-agent' to TinyPNG for them to help debug
+     * @return string
+     */
     private static function userAgent()
     {
         return 'levidurfee/tinypng/' . VERSION . ' PHP/' . PHP_VERSION;
     }
 
+    /**
+     * Return the api auth base64 encoded
+     * @return string
+     */
     protected function apiAuth()
     {
         return base64_encode('api:' . $this->apikey);
     }
 
+    /**
+     * Parse the headers sent by the TinyPNG server
+     * @param $headers
+     * @return array
+     */
     protected static function parseHeaders($headers) {
         if (!is_array($headers)) {
             $headers = explode("\r\n", $headers);
@@ -256,6 +310,13 @@ class Tinypng {
         return $res;
     }
 
+    /**
+     * Handle the status response from the server and throw exception if error occurs
+     * @param $status
+     * @param $body
+     * @return bool
+     * @throws \Exception
+     */
     protected function handleStatus($status, $body)
     {
         $errors = array(401, 429);
