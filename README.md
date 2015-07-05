@@ -15,12 +15,12 @@
 
 ## installation
 
-Add `"teklife/tinypng-resize" : "0.5.0"` to your `composer.json`. It might look something like this:
+Add `"teklife/tinypng-resize" : "0.8.0"` to your `composer.json`. It might look something like this:
 
 ```json
 {
   "require": {
-    "teklife/tinypng-resize" : "0.5.0"
+    "teklife/tinypng-resize" : "0.8.0"
   }
 }
 ```
@@ -80,6 +80,6 @@ This may change.
     - [ ] store the filename, md5 sum, and unique reference url of the image in a sqlite db
 - [x] finish fopenShrink method for people who do not have curl
 - [x] get tests working on travis-ci tests
-- [x] add to packagist when done - 0.5.0 is added to packagist.
+- [x] add to packagist when done - 0.8.0 is added to packagist.
 
 Using [RequestBin](http://requestb.in/) for some testing.
