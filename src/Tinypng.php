@@ -1,10 +1,10 @@
 <?php namespace teklife;
 
-const VERSION = '0.8.0';
+const VERSION = '0.8.1';
 
 /**
  * @author Levi <levi.durfee@gmail.com>
- * @version 0.8.0
+ * @version 0.8.1
  */
 class Tinypng {
 

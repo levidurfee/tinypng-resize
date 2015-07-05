@@ -3,7 +3,7 @@
 **This repo will be changing over the next couple of days. If you start using it now, be careful when upgrading to 1.0.0. The code will have changed.**
 
 [![Build Status](https://travis-ci.org/levidurfee/tinypng-resize.svg?branch=master)](https://travis-ci.org/levidurfee/tinypng-resize)
-[![build v0.8.0](https://img.shields.io/badge/build-0.8.0-orange.svg)]()
+[![build v0.8.1](https://img.shields.io/badge/build-0.8.1-orange.svg)]()
 
 > A service by [TinyPNG](https://tinypng.com). Get a free [API KEY](https://tinypng.com/developers).
 
