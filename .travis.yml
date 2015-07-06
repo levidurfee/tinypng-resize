@@ -1,6 +1,5 @@
 language: php
 php:
-- 5.3
 - 5.3.3
 - 5.4
 - 5.5
@@ -8,7 +7,7 @@ php:
 - 7.0
 before_script:
   - travis_retry composer self-update
-  - travis_retry composer install --no-interaction --prefer-source --dev
+  - travis_retry composer install --no-interaction --prefer-source
 env:
   global:
     secure: L/4s3D9PBwq+M1JfyPpAClLPVT0JdX5wKLsoPbBg1lLSCLpNJ7qpce4giLRFcGzQUEiEc8TNjP002tVmp6Sn9wDnd8btjUFX9AxEckyEDC+/x2E0CfmpX9j9FMxhOO15f0hnEmhIR1IB3SibgQViaCL1El293PCuDgmi7N8yZwoZd8idOT6UGX+U3lGVqmr1Lfn2saF3PDc56Y1JL6j7q5zaONenjZJNqxdAcQ/iRGqPbKfncGGt72mYZeg8WLeu4cV9lsrJ9Uiq0KYzTZCRwADj3zi9C5s0RmMHJs4MGtpR6K0SdL8IsdMXB84nfWDYJ4JtzYJvWgD1BecIP4ZW29kconG4Evu9yCnf7WnXFWwle06TrteGyjZl2aO376RGzdxjkjqzypO+i5bhttNbk5V+xiMznW8w1qAE6ZshNNejYUlEx4ACBOs2BLI88Z2DYlYszO7vlRrVvMyNkvh3azAA4f6YpcwLSzzzrodSv5CdFSxYo6H901IBXSQAa2JmAFaTuHV32RA+qGzxkB6pPpaSNwZZhV2ItBCJZBbwCVg34sWPX7/cULQPFRWoRqveYeX0blAshtEQzDY0R9aQEGi7whtBgKx9bEcfvZiV7e/rWCmvwKRtLPZjPi4cU4UL87FxrlALSmck2UzLXY7Z/aXD0l07YIpouCMsPpWu8uY=
