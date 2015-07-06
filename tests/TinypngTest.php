@@ -91,4 +91,17 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
             $this->assertEquals('Your monthly limit has been exceeded', $e->getMessage());
         }
     }
+
+    /**
+     * test invalid file
+     */
+    public function testShrinkInvalidFile()
+    {
+        try {
+            $result = $this->tinypng->shrink('VERSION', 'VERSION');
+            $this->assertFalse($result);
+        } catch(\Exception $e) {
+            $this->assertEquals('Error compressing the file.', $e->getMessage());
+        }
+    }
 }

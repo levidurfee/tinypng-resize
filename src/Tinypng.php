@@ -123,8 +123,8 @@ class Tinypng {
                 }
             }
         } else {
-            print(curl_error($request));
-            #throw new \Exception('Error compressing the file');
+            throw new \Exception('Error compressing the file.');
+            return false;
         }
     }
 
