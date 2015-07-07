@@ -38,7 +38,18 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
     {
         try {
             $result = $this->tinypng->shrink('ignore/helicopter-original.png',
-            'ignore/helicopter-new.png')->resize(150, 150, true);
+            'ignore/helicopter-new.png');
+            $this->assertInstanceOf('teklife\Tinypng', $result);
+        } catch(\Exception $e) {
+            $this->assertEquals('Your monthly limit has been exceeded', $e->getMessage());
+        }
+    }
+
+    public function testShrinkResizeSuccess()
+    {
+        try {
+            $result = $this->tinypng->shrink('ignore/helicopter-original.png',
+                'ignore/helicopter-new-resize.png')->resize(150, 150, true);
             $this->assertTrue($result);
         } catch(\Exception $e) {
             $this->assertEquals('Your monthly limit has been exceeded', $e->getMessage());
@@ -53,7 +64,7 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
         try {
             $tp = new Tinypng('invalidcredentials');
             $result = $tp->shrink('ignore/helicopter-original.png',
-                'ignore/helicopter-new.png')->resize(150, 150, true);
+                'ignore/helicopter-new-cred.png')->resize(150, 150, true);
             $this->assertFalse($result);
         } catch(\Exception $e) {
             $this->assertEquals('Credentials are invalid', $e->getMessage());
@@ -67,7 +78,7 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
     {
         try {
             $result = $this->tinypng->shrink('ignore/helicopter-original.png',
-                'ignore/helicopter-new.png')->resize('', 150, true);
+                'ignore/helicopter-new-width.png')->resize('', 150, true);
             $this->assertFalse($result);
         } catch(\InvalidArgumentException $e) {
             $this->assertEquals('Width or height must be set and be an int', $e->getMessage());
@@ -83,7 +94,7 @@ class TinypngTests extends \PHPUnit_Framework_TestCase
     {
         try {
             $result = $this->tinypng->shrink('ignore/helicopter-original.png',
-                'ignore/helicopter-new.png')->resize(150, '', true);
+                'ignore/helicopter-new-height.png')->resize(150, '', true);
             $this->assertFalse($result);
         } catch(\InvalidArgumentException $e) {
             $this->assertEquals('Width or height must be set and be an int', $e->getMessage());

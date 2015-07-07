@@ -1,10 +1,10 @@
 <?php namespace teklife;
 
-const VERSION = '0.8.1';
+const VERSION = '0.8.2';
 
 /**
  * @author Levi <levi.durfee@gmail.com>
- * @version 0.8.1
+ * @version 0.8.2
  */
 class Tinypng {
 
@@ -60,11 +60,10 @@ class Tinypng {
 
         # Check and see if curl is installed - if it isn't, use fopen
         if(function_exists('curl_version')) {
-            $this->curlResize();
+            return $this->curlResize();
         } else {
-            $this->fopenResize();
+            return $this->fopenResize();
         }
-        return true;
     }
 
     /**
@@ -106,21 +105,12 @@ class Tinypng {
             foreach (explode("\r\n", $headers) as $header) {
                 if (strtolower(substr($header, 0, 10)) === "location: ") {
                     $this->resizeUrl = substr($header, 10);
-                    $request = curl_init();
-                    curl_setopt_array($request, array(
-                        CURLOPT_URL => substr($header, 10),
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_CAINFO         => self::caBundle(),
-                        CURLOPT_SSL_VERIFYPEER => true,
-                        CURLOPT_USERAGENT      => self::userAgent()
-                    ));
-
-                    if(file_put_contents($this->output, curl_exec($request))) {
-                        return true;
-                    } else {
-                        return false;
-                    }
                 }
+            }
+            if(file_put_contents($this->output, file_get_contents($this->resizeUrl))) {
+                return true;
+            } else {
+                return false;
             }
         } else {
             throw new \Exception('Error compressing the file.');
@@ -177,18 +167,18 @@ class Tinypng {
 
         # setup array for my options
         $options = array(
-                'http' => array(
-                        'method' => 'POST',
-                        'header' => array(
-                            'Content-type: ' . $mimeType,
-                            'Authorization: Basic ' . self::apiAuth()
-                        ),
-                        'content' => file_get_contents($this->input)
+            'http' => array(
+                'method' => 'POST',
+                'header' => array(
+                    'Content-type: ' . $mimeType,
+                    'Authorization: Basic ' . self::apiAuth()
                 ),
-                'ssl' => array(
-                    'cafile'      => self::caBundle(),
-                    'verify_peer' => true
-                )
+                'content' => file_get_contents($this->input)
+            ),
+            'ssl' => array(
+                'cafile'      => self::caBundle(),
+                'verify_peer' => true
+            )
         );
 
         $result = fopen($this->host, 'r', false, stream_context_create($options));
@@ -214,18 +204,18 @@ class Tinypng {
         $this->makeJson();
 
         $resizeOption = array(
-                'http' => array(
-                        'method' => 'POST',
-                        'header' => array(
-                            'Content-type: application/json',
-                            'Authorization: Basic ' . self::apiAuth()
-                        ),
-                        'content' => $this->jsonRequest
+            'http' => array(
+                'method' => 'POST',
+                'header' => array(
+                    'Content-type: application/json',
+                    'Authorization: Basic ' . self::apiAuth()
                 ),
-                'ssl' => array(
-                    'cafile'      => self::caBundle(),
-                    'verify_peer' => true
-                )
+                'content' => $this->jsonRequest
+            ),
+            'ssl' => array(
+                'cafile'      => self::caBundle(),
+                'verify_peer' => true
+            )
         );
 
         $image = file_get_contents($this->resizeUrl, false, stream_context_create($resizeOption));
@@ -240,7 +230,13 @@ class Tinypng {
      */
     protected function makeJson()
     {
+        #echo "Width: " . $this->width . "\r\n";
+        #echo "Height: " . $this->height . "\r\n";
         if(!(is_int($this->width)) OR (!is_int($this->height))) {
+            throw new \InvalidArgumentException('Width or height must be set and be an int');
+            return false;
+        }
+        if((strlen($this->width)) == 0 OR (strlen($this->height) == 0)) {
             throw new \InvalidArgumentException('Width or height must be set and be an int');
             return false;
         }
