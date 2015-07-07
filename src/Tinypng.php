@@ -95,7 +95,7 @@ class Tinypng {
 
         $status = curl_getinfo($request, CURLINFO_HTTP_CODE);
         $headerSize = curl_getinfo($request, CURLINFO_HEADER_SIZE);
-        $headers = self::parseHeaders(substr($response, 0, $headerSize));
+        self::parseHeaders(substr($response, 0, $headerSize));
         $body = substr($response, $headerSize);
 
         $this->handleStatus($status, $body);
@@ -156,7 +156,7 @@ class Tinypng {
 
         $status = curl_getinfo($request, CURLINFO_HTTP_CODE);
         $headerSize = curl_getinfo($request, CURLINFO_HEADER_SIZE);
-        $headers = self::parseHeaders(substr($response, 0, $headerSize));
+        self::parseHeaders(substr($response, 0, $headerSize));
         $body = substr($response, $headerSize);
 
         $this->handleStatus($status, $body);
