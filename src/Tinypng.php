@@ -17,6 +17,7 @@ class Tinypng {
     protected $fit;
     protected $resizeUrl;
     protected $jsonRequest;
+    protected $cover;
 
     public function __construct($apikey)
     {
@@ -51,12 +52,13 @@ class Tinypng {
      * @param bool|false $fit
      * @return bool
      */
-    public function resize($width = '', $height = '', $fit = false)
+    public function resize($width = '', $height = '', $fit = false, $cover = false)
     {
         # Set these so they can be used throughout the class
         $this->width  = $width;
         $this->height = $height;
         $this->fit    = $fit;
+        $this->cover  = $cover;
 
         # Check and see if curl is installed - if it isn't, use fopen
         if(function_exists('curl_version')) {
@@ -240,24 +242,36 @@ class Tinypng {
             throw new \InvalidArgumentException('Width or height must be set and be an int');
             return false;
         }
-        if($this->fit) {
-            list($width, $height) = getimagesize($this->input);
-            if($width > $height) {
-                $jsonArray = array('resize' => array('width' => $this->width));
+        if($this->cover){
+
+            $jsonArray = array('resize' => array('width' => $this->width, 'height' => $this->height, 'method' => 'cover'));
+            $this->jsonRequest = json_encode($jsonArray, true);
+            return true;
+
+        }else{
+
+            if($this->fit) {
+                list($width, $height) = getimagesize($this->input);
+                if($width > $height) {
+                    $jsonArray = array('resize' => array('width' => $this->width));
+                } else {
+                    $jsonArray = array('resize' => array('height' => $this->height));
+                }
+                $this->jsonRequest = json_encode($jsonArray, true);
+                return true;
             } else {
-                $jsonArray = array('resize' => array('height' => $this->height));
+                if(is_int($this->width)) {
+                    $jsonArray = array('resize' => array('width' => $this->width));
+                } elseif(is_int($this->height)) {
+                    $jsonArray = array('resize' => array('height' => $this->height));
+                }
+                $this->jsonRequest = json_encode($jsonArray, true);
+                return true;
             }
-            $this->jsonRequest = json_encode($jsonArray, true);
-            return true;
-        } else {
-            if(is_int($this->width)) {
-                $jsonArray = array('resize' => array('width' => $this->width));
-            } elseif(is_int($this->height)) {
-                $jsonArray = array('resize' => array('height' => $this->height));
-            }
-            $this->jsonRequest = json_encode($jsonArray, true);
-            return true;
+
         }
+
+
     }
 
     /**
