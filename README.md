@@ -68,7 +68,7 @@ To resize and crop, if necessary 150x150:
 ```php
 require_once('vendor/autoload.php');
 $tp = new teklife\Tinypng('YOUR_API_KEY');
-$tp->shrink('ignore/helicopter-original.png', 'ignore/helicopter-new-levi.png')->resize(150, 150,false,true);
+$tp->shrink('ignore/helicopter-original.png', 'ignore/helicopter-new-levi.png')->resize(150, 150, false, true);
 ```
 ## quote from TinyPNG
 
