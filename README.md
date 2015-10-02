@@ -63,6 +63,13 @@ $tp->shrink('ignore/helicopter-original.png', 'ignore/helicopter-new-levi.png')-
 
 *The image will either be 150px wide or 150px tall. If it is 150px wide, then the height will be smaller than 150px. If it is 150px tall, then the width will be smaller than 150px. It bases this off the original image size. It will not crop the image.*
 
+To resize and crop, if necessary 150x150:
+
+```php
+require_once('vendor/autoload.php');
+$tp = new teklife\Tinypng('YOUR_API_KEY');
+$tp->shrink('ignore/helicopter-original.png', 'ignore/helicopter-new-levi.png')->resize(150, 150, false, true);
+```
 ## quote from TinyPNG
 
 > Images are resized by using the aspect ratio of the original image. Either the width or the height can be provided.
