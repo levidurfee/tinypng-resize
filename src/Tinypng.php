@@ -248,7 +248,7 @@ class Tinypng {
             $this->jsonRequest = json_encode($jsonArray, true);
             return true;
 
-        }else{
+        } else {
 
             if($this->fit) {
                 list($width, $height) = getimagesize($this->input);
